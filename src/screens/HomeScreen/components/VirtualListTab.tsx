@@ -3,58 +3,82 @@ import { Box, Stack, Typography } from '@mui/material';
 import { FixedSizeList as List } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
+import { selectProducts, selectProductsLength } from '../../../store/products/productsSlice';
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { getProductsData } from '../../../store/products/thunks';
-import { selectProducts } from '../../../store/products/productsSlice';
+import { useBreakpoints } from '../../../hooks';
 
-const VirtualList = () => {
-  const dispatch = useAppDispatch();
-  const products = useAppSelector(selectProducts);
+const ProductsRow = ({ index, style }: { index: number; style: object }) => {
+  const { data } = useAppSelector(selectProducts);
+  const { mdDown } = useBreakpoints();
 
-  const productsRow = ({ index, style }: { index: number; style: object }) => {
-    const imageSrc = products.data[index].category.image;
-    const title = products.data[index].title;
-    const price = products.data[index].price;
-    const description = products.data[index].description;
+  const {
+    category: { image },
+    title,
+    price,
+    description,
+  } = data[index];
 
-    return (
-      <div style={style}>
-        <Stack
-          flexDirection={'row'}
-          mx={2}
-          px={6}
-          py={4}
-          alignItems={'flex-start'}
-          justifyContent={'space-between'}
-          borderBottom={1}
-          borderColor={'grey.300'}
-        >
-          <img src={imageSrc} width={100} alt="" />
-          <Box px={2} flex={1}>
-            <Typography variant="h4">{title}</Typography>
-            <Typography color={'grey.500'}>{description}</Typography>
-          </Box>
+  const flexDirection = mdDown ? 'column' : 'row';
+
+  return (
+    <div style={style}>
+      <Stack
+        flexDirection={flexDirection}
+        mx={2}
+        px={{ xs: 2, md: 6 }}
+        py={4}
+        alignItems={'flex-start'}
+        justifyContent={'space-between'}
+        borderBottom={1}
+        borderColor={'grey.300'}
+      >
+        <Stack flexDirection={'row'} alignItems={'stretch'}>
+          <img src={image} width={100} alt="" />
+          {mdDown && (
+            <Box ml={3}>
+              <Typography variant="h5">{title}</Typography>
+
+              <Typography fontWeight={'bold'} variant="h6">
+                {price}$
+              </Typography>
+            </Box>
+          )}
+        </Stack>
+        <Box px={!mdDown ? 2 : undefined} flex={1}>
+          {!mdDown && <Typography variant="h4">{title}</Typography>}
+          <Typography color={'grey.500'}>{description}</Typography>
+        </Box>
+        {!mdDown && (
           <Typography fontWeight={'bold'} variant="h6">
             {price}$
           </Typography>
-        </Stack>
-      </div>
-    );
-  };
+        )}
+      </Stack>
+    </div>
+  );
+};
+
+const VirtualList = () => {
+  const dispatch = useAppDispatch();
+  const productslength = useAppSelector(selectProductsLength);
+
+  const { mdDown } = useBreakpoints();
+  const itemSize = mdDown ? 220 : 200;
 
   useEffect(() => {
-    if (!products.data.length) {
+    if (!productslength) {
       dispatch(getProductsData());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [products.data.length]);
+  }, [productslength]);
 
   return (
     <Stack border={1} borderColor={'grey.300'} height={'70vh'} mt={2}>
       <AutoSizer>
         {({ height, width }: { height: number; width: number }) => (
-          <List height={height} width={width} itemCount={products.data.length} itemSize={200}>
-            {productsRow}
+          <List height={height} width={width} itemCount={productslength} itemSize={itemSize}>
+            {ProductsRow}
           </List>
         )}
       </AutoSizer>

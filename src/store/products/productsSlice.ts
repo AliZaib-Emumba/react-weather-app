@@ -30,5 +30,6 @@ export const productsSlice = createSlice({
 export const { setProducts } = productsSlice.actions;
 
 export const selectProducts = (state: { products: productsState }) => state.products;
+export const selectProductsLength = (state: { products: productsState }) => state.products.data.length;
 
 export default productsSlice.reducer;
