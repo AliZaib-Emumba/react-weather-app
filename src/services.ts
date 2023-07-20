@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { LayerType, ProductsResponseType, TempResponseData } from './types';
+import { CategoryType, LayerType, ProductType, ProductsResponseType, TempResponseData } from './types';
 import { formatList } from './utils';
 
 export const APP_ID = 'b39afe17e29959ddb7fe843a7ebbdff1';
@@ -63,6 +63,30 @@ export const fetchProducts = async (): Promise<ProductsResponseType> => {
   try {
     const response = await axios.get(PRODUCTS_URL);
     return { data: response.data };
+  } catch (e) {
+    throw e;
+  }
+};
+
+// ######################################
+
+const CATEGORIES_URL = 'https://api.escuelajs.co/api/v1/categories';
+const PRODUCTS = 'https://api.escuelajs.co/api/v1/products';
+
+export const fetchCategories = async (): Promise<CategoryType[]> => {
+  try {
+    const response = await axios.get(CATEGORIES_URL);
+
+    return response.data;
+  } catch (e) {
+    throw e;
+  }
+};
+
+export const fetchProductsWithCategories = async (): Promise<ProductType[]> => {
+  try {
+    const response = await axios.get(PRODUCTS);
+    return response.data;
   } catch (e) {
     throw e;
   }

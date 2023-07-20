@@ -91,3 +91,34 @@ export type ProductsResponseType = {
 };
 
 export type LayerType = 'precipitation_new' | 'clouds_new' | 'temp_new';
+
+// ****************##################
+
+export type ProductType = {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  images: string[];
+  creationAt: string;
+  updatedAt: string;
+  category: {
+    id: number;
+    name: string;
+    image: string;
+    creationAt: string;
+    updatedAt: string;
+  };
+};
+
+export type ProductWithCategory = {
+  [key: string]: ProductType[];
+};
+
+export type CategoryType = {
+  id: number;
+  name: string;
+  image: string;
+  creationAt: string;
+  updatedAt: string;
+};
