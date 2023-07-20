@@ -1,5 +1,5 @@
 import { IMAGE_URL } from './services';
-import { TempResponseData } from './types';
+import { ProductType, TempResponseData } from './types';
 
 export const formatList = (data: TempResponseData) => {
   const uniqueList = new Map();
@@ -61,4 +61,12 @@ export const convertToCelsius = (temp: number): number => {
 export const convertToFahrenheit = (temp: number): number => {
   let val = (temp * 9) / 5 + 32;
   return Math.round((val + Number.EPSILON) * 100) / 100;
+};
+
+export const groupProducts = (list: ProductType[]) => {
+  return list.reduce(function (r, a) {
+    r[a.category.name] = r[a.category.name] || [];
+    r[a.category.name].push(a);
+    return r;
+  }, Object.create(null));
 };
